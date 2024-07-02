@@ -11,7 +11,7 @@ Hovercooked é uma simulação de um jogo de restaurante onde os jogadores devem
 ## Mecânica do Jogo
 O jogo se desenrola em um loop, onde novos pedidos são adicionados de tempos em tempos a um mural de pedidos que devem ser concluídos antes do tempo limite acabar. Os jogadores controlam os cozinheiros, atribuindo-lhes pedidos específicos. Cada cozinheiro, representado por uma thread individual, processa um pedido de cada vez, seguindo as etapas de preparação e cozimento para depois concluir o mesmo.
 
-A cozinha possui alguns recursos, como bancadas e fogões, na qual os cozinheiros precisam compartilhar e não podem ser usados simultaneamente por dois ou mais cozinheiros. O jogo possui diferentes níveis de dificuldade, na qual irá desafiar o jogador de forma progressiva.
+A cozinha possui algumas bancadas como recurso, na qual os cozinheiros precisam compartilhar e não podem ser usados simultaneamente por dois ou mais cozinheiros. O jogo possui diferentes níveis de dificuldade, na qual irá desafiar o jogador de forma progressiva.
 
 ## Threads e Concorrência
 - **Thread de mural de pedidos (mural_pedidos):** Essa thread é responsável por gerar novos pedidos e adicioná-los ao mural de pedidos num intervalo de 1 a 5 segundos. A geração de pedidos é aleatória.
@@ -47,7 +47,7 @@ O projeto está dividido nos seguintes arquivos:
 - ○ ./hovercooked
 
 ## Dificuldade do Jogo
-Ao iniciar o jogo você terá que escolher a dificuldade do mesmo, podendo selecionar entre Fácil, Médio e Difícil com a complexidade do aumentando de forma gradativa. 
+Ao iniciar o jogo você terá que escolher a dificuldade do mesmo, podendo selecionar entre Fácil, Médio e Difícil com a complexidade do jogo aumentando de forma gradativa. 
 
 - Fácil: Você terá apenas um pedido e sem tempo limite.
 - Médio: Você terá todas as bancadas e todos os cozinheiros a sua disposição.

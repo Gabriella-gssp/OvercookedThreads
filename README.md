@@ -15,12 +15,14 @@ A cozinha possui bancadas e a cozinha como recursos na qual os cozinheiros preci
 
 ## Sistema de Pontuação
 O jogo possui um sistema de pontuação detalhado que avalia o desempenho do jogador. A pontuação é calculada com base nos seguintes fatores:
-Pedidos entregues: Cada pedido entregue corretamente adiciona pontos à pontuação.
-Entregas rápidas: Pedidos entregues em menos de 5 segundos concedem um bônus de pontos.
-Pedidos errados: Pedidos preparados incorretamente resultam em perda de pontos.
-Satisfação do cliente: O tempo médio de entrega dos pedidos influencia a satisfação do cliente, que, por sua vez, afeta a pontuação final. A satisfação do cliente é representada por uma porcentagem que varia de acordo com o tempo médio de entrega. Se o tempo médio for menor ou igual a 5 segundos, a satisfação é de 100%. Se for menor ou igual a 10 segundos, cai para 80%, e se for maior que 10 segundos, a satisfação é de 60%. Além disso, a cada pedido errado, a satisfação diminui em 10%.
-Bônus por alta satisfação: Uma alta satisfação do cliente (90% ou mais) garante um bônus adicional na pontuação.
-Interface do Usuário (NCurses)
+
+- Pedidos entregues: Cada pedido entregue corretamente adiciona pontos à pontuação.
+- Entregas rápidas: Pedidos entregues em menos de 5 segundos concedem um bônus de pontos.
+- Pedidos errados: Pedidos preparados incorretamente resultam em perda de pontos.
+- Satisfação do cliente: O tempo médio de entrega dos pedidos influencia a satisfação do cliente, que, por sua vez, afeta a pontuação final. A satisfação do cliente é representada por uma porcentagem que varia de acordo com o tempo médio de entrega. Se o tempo médio for menor ou igual a 5 segundos, a satisfação é de 100%. Se for menor ou igual a 10 segundos, cai para 80%, e se for maior que 10 segundos, a satisfação é de 60%. Além disso, a cada pedido errado, a satisfação diminui em 10%.
+- Bônus por alta satisfação: Uma alta satisfação do cliente (90% ou mais) garante um bônus adicional na pontuação.
+
+## Interface do Usuário (NCurses)
 A interface do jogo é implementada utilizando a biblioteca ncurses, que permite a criação de interfaces de usuário em modo texto no terminal. A tela é dividida em três seções principais:
 Pedidos: Exibe a lista de pedidos a serem preparados, indicando quais já foram concluídos.
 Cozinheiros: Mostra o estado de cada cozinheiro (disponível, preparando ingredientes ou preparando prato), o tempo restante para concluir o pedido atual e a bancada/cozinha que está utilizando.

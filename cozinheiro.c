@@ -1,11 +1,8 @@
-// cozinheiro.c
-
 #include "hovercooked.h"
-#include <unistd.h>
-#include <stdio.h>
 
 void *cozinheiro(void *arg) {
     Cozinheiro *c = (Cozinheiro *)arg;
+    c->pedidoCorreto = 1;
 
     while (1) {
         pthread_mutex_lock(&mutex_pedidos);
@@ -17,6 +14,7 @@ void *cozinheiro(void *arg) {
         }
 
         Prato *prato_info = &pratos[c->prato - 11];
+        c->tempoInicioPedido = tempoTotal;
         pthread_mutex_unlock(&mutex_pedidos);
 
         sem_wait(&semaforo_bancada);
@@ -31,9 +29,8 @@ void *cozinheiro(void *arg) {
                 break;
             }
         }
-        c->tempoRestante = prato_info->tempo_preparo_ingredientes;
-        sleep(1);
 
+        c->tempoRestante = prato_info->tempo_preparo_ingredientes;
         while (c->tempoRestante > 0) {
             sleep(1);
             c->tempoRestante--;
@@ -44,9 +41,9 @@ void *cozinheiro(void *arg) {
 
         sem_post(&semaforo_bancada);
         bancadas[c->bancada - 1] = 0;
-
         sem_wait(&semaforo_cozinha);
         c->estado = 2;
+
         for (int i = 0; i < MAX_COZINHAS; i++) {
             if (cozinhas[i] == 0) {
                 cozinhas[i] = c->id;
@@ -57,8 +54,8 @@ void *cozinheiro(void *arg) {
                 break;
             }
         }
-        c->tempoRestante = prato_info->tempo_preparo_prato;
 
+        c->tempoRestante = prato_info->tempo_preparo_prato;
         while (c->tempoRestante > 0) {
             sleep(1);
             c->tempoRestante--;
@@ -69,19 +66,20 @@ void *cozinheiro(void *arg) {
 
         sem_post(&semaforo_cozinha);
         cozinhas[c->cozinha - 1] = 0;
-
         c->estado = 0;
         c->prato = 0;
 
         pthread_mutex_lock(&mutex_tela);
         atualizar_tela();
-        mvwprintw(stdscr, 7, 0, "Cozinheiro %d preparou %s!", c->id, prato_info->nome);
+        mvwprintw(stdscr, 20 + c->id, 0, "Cozinheiro %d preparou %s!", c->id, prato_info->nome);
         refresh();
         pthread_mutex_unlock(&mutex_tela);
         sleep(1);
 
         pthread_mutex_lock(&mutex_pedidos);
         pedidosConcluidos++;
+        int tempoEntrega = tempoTotal - c->tempoInicioPedido;
+        atualizar_pontuacao(tempoEntrega, c->pedidoCorreto);
         pthread_mutex_unlock(&mutex_pedidos);
     }
 

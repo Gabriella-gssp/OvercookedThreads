@@ -1,9 +1,39 @@
-// tela.c
-
 #include "hovercooked.h"
-#include <ncurses.h>
-#include <string.h>
-#include <stdlib.h>
+
+void mostrar_menu_inicial() {
+    tela_inicial = newwin(LINES, COLS, 0, 0);
+    box(tela_inicial, 0, 0);
+    mvwprintw(tela_inicial, LINES / 2 - 4, (COLS - 26) / 2, "Simulador de Restaurante");
+    mvwprintw(tela_inicial, LINES / 2 - 2, (COLS - 18) / 2, "Escolha a dificuldade:");
+    wrefresh(tela_inicial);
+}
+
+int obter_opcao_menu() {
+    int opcao = 0; 
+    int tecla;
+
+    do {
+        mvwprintw(tela_inicial, LINES / 2 - 1 + opcao, (COLS - 12) / 2 - 2, "->");
+        mvwprintw(tela_inicial, LINES / 2 - 1, (COLS - 12) / 2, "1: Fácil");
+        mvwprintw(tela_inicial, LINES / 2, (COLS - 13) / 2, "2: Médio");
+        mvwprintw(tela_inicial, LINES / 2 + 1, (COLS - 14) / 2, "3: Difícil");
+        wrefresh(tela_inicial);
+
+        tecla = getch();
+        mvwprintw(tela_inicial, LINES / 2 - 1 + opcao, (COLS - 12) / 2 - 2, "  ");
+
+        switch (tecla) {
+            case KEY_UP:
+                opcao = (opcao > 0) ? opcao - 1 : 2;
+                break;
+            case KEY_DOWN:
+                opcao = (opcao < 2) ? opcao + 1 : 0;
+                break;
+            case 10:
+                return opcao + 1;
+        }
+    } while (1);
+}
 
 void mostrar_tela_inicial() {
     tela_inicial = newwin(LINES, COLS, 0, 0);
@@ -53,6 +83,25 @@ void inicializar_ncurses() {
     wrefresh(tela_pedidos);
     wrefresh(tela_cozinheiros);
     wrefresh(tela_recursos);
+}
+
+void mostrar_tela_tempo() {
+    clear();
+    WINDOW *tela_tempo = newwin(LINES, COLS, 0, 0);
+    box(tela_tempo, 0, 0);
+
+    mvwprintw(tela_tempo, LINES / 2 - 2, (COLS - 28) / 2, "Digite o tempo de jogo (segundos):");
+    wrefresh(tela_tempo);
+
+    echo();
+    curs_set(1);
+    mvwscanw(tela_tempo, LINES / 2, (COLS - 10) / 2, "%d", &tempoJogo);
+    noecho();
+    curs_set(0);
+
+    delwin(tela_tempo);
+    clear();
+    refresh();
 }
 
 void atualizar_tela() {
@@ -105,25 +154,14 @@ void atualizar_tela() {
     for (int i = 0; i < MAX_COZINHEIROS; i++) {
         mvwprintw(stdscr, 13 + i, 21, "Cozinheiro %d: 11 (Pizza), 12 (Hamburguer), 13 (Suco)", i + 1);
     }
+    mvwprintw(stdscr, 12 + MAX_COZINHEIROS + 1, 21, "Tempo: %d", tempoTotal);
+
+    mvwprintw(stdscr, 1, COLS - 30, "Pontuação: %d", pontuacao);
+    mvwprintw(stdscr, 2, COLS - 30, "Pedidos Entregues: %d", pedidosEntregues);
+    mvwprintw(stdscr, 3, COLS - 30, "Satisfação: %d%%", satisfacaoCliente);
 
     refresh();
     wrefresh(tela_pedidos);
     wrefresh(tela_cozinheiros);
     wrefresh(tela_recursos);
-}
-
-void fim_de_jogo() {
-    clear();
-    mvprintw(LINES / 2, (COLS - strlen("Fim de Jogo! Obrigado por jogar.")) / 2, "Fim de Jogo! Obrigado por jogar.");
-    mvprintw(LINES / 2 + 1, (COLS - strlen("Pressione qualquer tecla (nao numerica) para sair.")) / 2, "Pressione qualquer tecla (nao numerica) para sair.");
-    refresh();
-    getch();
-    endwin();
-
-    pthread_mutex_destroy(&mutex_tela);
-    pthread_mutex_destroy(&mutex_pedidos);
-    sem_destroy(&semaforo_bancada);
-    sem_destroy(&semaforo_cozinha);
-
-    exit(0);
 }

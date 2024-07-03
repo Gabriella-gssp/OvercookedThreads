@@ -1,14 +1,13 @@
-// gerente.c
-
 #include "hovercooked.h"
-#include <stdio.h>
-#include <unistd.h>
 
 void *gerente(void *arg) {
     int tecla1, tecla2;
 
     while (tempoTotal < tempoJogo || tempoJogo == -1) {
         tecla1 = getch();
+        if (tecla1 == 'q') {
+            break;
+        }
         tecla2 = getch();
 
         int cozinheiro = tecla1 - '0';
@@ -21,7 +20,7 @@ void *gerente(void *arg) {
                 pthread_cond_signal(&cozinheiros[cozinheiro - 1].cond_inicio_preparo);
             } else {
                 pthread_mutex_lock(&mutex_tela);
-                mvwprintw(stdscr, 7, 0, "Cozinheiro %d ou recursos indisponíveis!", cozinheiro);
+                mvwprintw(stdscr, 20, 0, "Cozinheiro %d ou recursos indisponíveis!", cozinheiro);
                 refresh();
                 pthread_mutex_unlock(&mutex_tela);
                 sleep(1);
@@ -29,7 +28,7 @@ void *gerente(void *arg) {
             pthread_mutex_unlock(&mutex_pedidos);
         } else {
             pthread_mutex_lock(&mutex_tela);
-            mvwprintw(stdscr, 7, 0, "Comando inválido!");
+            mvwprintw(stdscr, 20, 0, "Comando inválido!");
             refresh();
             pthread_mutex_unlock(&mutex_tela);
             sleep(1);

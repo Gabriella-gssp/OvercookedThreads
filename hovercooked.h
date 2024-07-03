@@ -24,8 +24,8 @@ typedef struct {
     int tempo_preparo_ingredientes;
     int tempo_preparo_prato;
     char nome[20];
-    int tempoInicioPedido;
-    int pedidoCorreto;
+    int tempoInicioPedido; // Tempo em que o pedido foi iniciado
+    int pedidoCorreto;    // Indica se o pedido foi preparado corretamente
 } Prato;
 
 typedef struct {
@@ -35,17 +35,18 @@ typedef struct {
     int tempoRestante;
     int bancada;
     int cozinha;
-    int tempoInicioPedido;
-    int pedidoCorreto;
+    int tempoInicioPedido; // Tempo em que o pedido foi iniciado
+    int pedidoCorreto;    // Indica se o pedido foi preparado corretamente
     pthread_cond_t cond_inicio_preparo;
     pthread_t thread;
 } Cozinheiro;
 
+// Variáveis globais
 extern Prato pratos[];
-extern Cozinheiro cozinheiros[MAX_COZINHEIROS];
-extern int bancadas[MAX_BANCADAS];
-extern int cozinhas[MAX_COZINHAS];
-extern int pedidos[MAX_PEDIDOS];
+extern Cozinheiro cozinheiros[];
+extern int bancadas[];
+extern int cozinhas[];
+extern int pedidos[];
 extern int numPedidos;
 extern int tempoJogo;
 extern int tempoTotal;
@@ -56,26 +57,35 @@ extern int pedidosEntregues;
 extern int pedidosErrados;
 extern int tempoMedioEntrega;
 extern int satisfacaoCliente;
-extern sem_t semaforo_bancada, semaforo_cozinha;
-extern pthread_mutex_t mutex_tela, mutex_pedidos;
-extern WINDOW *tela_inicial, *tela_pedidos, *tela_cozinheiros, *tela_recursos;
-extern pthread_t gerente_thread, mural_pedidos_thread;
-extern int posicaoXBancada[MAX_BANCADAS];
-extern int posicaoYBancada[MAX_BANCADAS];
-extern int posicaoXCozinha[MAX_COZINHAS];
-extern int posicaoYCozinha[MAX_COZINHAS];
 
+// Semáforos e mutexes
+extern sem_t semaforo_bancada;
+extern sem_t semaforo_cozinha;
+extern pthread_mutex_t mutex_tela;
+extern pthread_mutex_t mutex_pedidos;
+
+// Janelas NCurses
+extern WINDOW *tela_inicial, *tela_pedidos, *tela_cozinheiros, *tela_recursos;
+
+// Posições de bancadas e cozinhas
+extern int posicaoXBancada[];
+extern int posicaoYBancada[];
+extern int posicaoXCozinha[];
+extern int posicaoYCozinha[];
+
+// Declarações de funções
 void mostrar_menu_inicial();
 int obter_opcao_menu();
 void mostrar_tela_inicial();
 void ocultar_tela_inicial();
 void inicializar_ncurses();
-void atualizar_pontuacao(int tempoEntrega, int pedidoCorreto);
-void mostrar_tela_tempo();
 void atualizar_tela();
+void atualizar_pontuacao(int tempoEntrega, int pedidoCorreto);
+void fim_de_jogo();
+
+// Funções de threads
 void *cozinheiro(void *arg);
 void *gerente(void *arg);
 void *mural_pedidos(void *arg);
-void fim_de_jogo();
 
-#endif
+#endif // HOVERCOOKED_H

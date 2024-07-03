@@ -1,37 +1,6 @@
 #include "hovercooked.h"
-
-void atualizar_pontuacao(int tempoEntrega, int pedidoCorreto) {
-    if (pedidoCorreto) {
-        pontuacao += 10;
-        pedidosEntregues++;
-
-        tempoMedioEntrega = (tempoMedioEntrega * (pedidosEntregues - 1) + tempoEntrega) / pedidosEntregues; 
-
-        if (tempoEntrega < 5) {
-            pontuacao += 5;
-        }
-
-        if (tempoMedioEntrega <= 5) {
-            satisfacaoCliente = 100;
-        } else if (tempoMedioEntrega <= 10) {
-            satisfacaoCliente = 80;
-        } else {
-            satisfacaoCliente = 60;
-        }
-    } else {
-        pontuacao -= 5;
-        pedidosErrados++;
-
-        satisfacaoCliente -= 10;
-        if (satisfacaoCliente < 0) {
-            satisfacaoCliente = 0;
-        }
-    }
-
-    if (satisfacaoCliente >= 90) {
-        pontuacao += 10;
-    }
-}
+#include <string.h>
+#include <ncurses.h>
 
 void fim_de_jogo() {
     clear();

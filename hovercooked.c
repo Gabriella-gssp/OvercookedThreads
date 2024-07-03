@@ -11,6 +11,7 @@ Prato pratos[] = {
     {12, TEMPO_HAMBURGUER, TEMPO_HAMBURGUER, "Hamburguer"},
     {13, TEMPO_SUCO, TEMPO_SUCO, "Suco"}
 };
+
 Cozinheiro cozinheiros[MAX_COZINHEIROS];
 int bancadas[MAX_BANCADAS] = {0};
 int cozinhas[MAX_COZINHAS] = {0};
@@ -21,37 +22,41 @@ int tempoTotal = 0;
 int pedidoAtual = 0;
 int pedidosConcluidos = 0;
 
+int pontuacao = 0;
+int pedidosEntregues = 0;
+int pedidosErrados = 0;
+int tempoMedioEntrega = 0;
+int satisfacaoCliente = 100;
+
 sem_t semaforo_bancada, semaforo_cozinha;
 pthread_mutex_t mutex_tela, mutex_pedidos;
 
 WINDOW *tela_inicial, *tela_pedidos, *tela_cozinheiros, *tela_recursos;
 pthread_t gerente_thread, mural_pedidos_thread;
 
+int posicaoXBancada[MAX_BANCADAS];
+int posicaoYBancada[MAX_BANCADAS];
+int posicaoXCozinha[MAX_COZINHAS];
+int posicaoYCozinha[MAX_COZINHAS];
+
 int main() {
     srand(time(NULL));
 
-    int nivel;
-    printf("Escolha o nível de dificuldade (1: Fácil, 2: Médio, 3: Difícil): ");
-    scanf("%d", &nivel);
+    inicializar_ncurses();
+    mostrar_menu_inicial();
+    int nivel = obter_opcao_menu();
+    delwin(tela_inicial);
 
-    switch (nivel) {
-        case 1:
-            tempoJogo = -1;
-            break;
-        case 2:
-        case 3:
-            printf("Digite o tempo de jogo (segundos): ");
-            scanf("%d", &tempoJogo);
-            break;
-        default:
-            printf("Nível inválido. Usando nível fácil.\n");
-            tempoJogo = -1;
+    if (nivel != 1) {
+        mostrar_tela_tempo();
+    } else {
+        tempoJogo = -1;
     }
 
     int numCozinheiros = (nivel == 3) ? 4 : MAX_COZINHEIROS;
     int numBancadas = (nivel == 3) ? 2 : MAX_BANCADAS;
     int numCozinhas = numCozinheiros;
-
+    
     switch (nivel) {
         case 1:
             numPedidos = (rand() % 5) + 1;
@@ -64,9 +69,28 @@ int main() {
             break;
     }
 
-    inicializar_ncurses();
-    mostrar_tela_inicial();
-    ocultar_tela_inicial();
+    pontuacao = 0;
+    pedidosEntregues = 0;
+    pedidosErrados = 0;
+    tempoMedioEntrega = 0;
+    satisfacaoCliente = 100;
+
+    posicaoXBancada[0] = 10;
+    posicaoYBancada[0] = 5;
+    posicaoXBancada[1] = 25;
+    posicaoYBancada[1] = 5;
+    posicaoXBancada[2] = 40;
+    posicaoYBancada[2] = 5;
+
+    posicaoXCozinha[0] = 10;
+    posicaoYCozinha[0] = 10;
+    posicaoXCozinha[1] = 25;
+    posicaoYCozinha[1] = 10;
+    posicaoXCozinha[2] = 40;
+    posicaoYCozinha[2] = 10;
+
+    mostrar_tela_inicial(); 
+    ocultar_tela_inicial(); 
     atualizar_tela();
 
     pthread_mutex_init(&mutex_tela, NULL);

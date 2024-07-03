@@ -1,4 +1,6 @@
 #include "hovercooked.h"
+#include <string.h>
+#include <ncurses.h>
 
 void mostrar_menu_inicial() {
     tela_inicial = newwin(LINES, COLS, 0, 0);
@@ -9,7 +11,7 @@ void mostrar_menu_inicial() {
 }
 
 int obter_opcao_menu() {
-    int opcao = 0; 
+    int opcao = 0; // Começa na opção Fácil (índice 0)
     int tecla;
 
     do {
@@ -83,6 +85,39 @@ void inicializar_ncurses() {
     wrefresh(tela_pedidos);
     wrefresh(tela_cozinheiros);
     wrefresh(tela_recursos);
+}
+
+void atualizar_pontuacao(int tempoEntrega, int pedidoCorreto) {
+    if (pedidoCorreto) {
+        pontuacao += 10;
+        pedidosEntregues++;
+
+        tempoMedioEntrega = (tempoMedioEntrega * (pedidosEntregues - 1) + tempoEntrega) / pedidosEntregues; 
+
+        if (tempoEntrega < 5) {
+            pontuacao += 5;
+        }
+
+        if (tempoMedioEntrega <= 5) {
+            satisfacaoCliente = 100;
+        } else if (tempoMedioEntrega <= 10) {
+            satisfacaoCliente = 80;
+        } else {
+            satisfacaoCliente = 60;
+        }
+    } else {
+        pontuacao -= 5;
+        pedidosErrados++;
+
+        satisfacaoCliente -= 10;
+        if (satisfacaoCliente < 0) {
+            satisfacaoCliente = 0;
+        }
+    }
+
+    if (satisfacaoCliente >= 90) {
+        pontuacao += 10;
+    }
 }
 
 void mostrar_tela_tempo() {
@@ -159,6 +194,7 @@ void atualizar_tela() {
     mvwprintw(stdscr, 1, COLS - 30, "Pontuação: %d", pontuacao);
     mvwprintw(stdscr, 2, COLS - 30, "Pedidos Entregues: %d", pedidosEntregues);
     mvwprintw(stdscr, 3, COLS - 30, "Satisfação: %d%%", satisfacaoCliente);
+
 
     refresh();
     wrefresh(tela_pedidos);
